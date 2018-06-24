@@ -1,0 +1,41 @@
+#!/usr/bin/env python3
+import glob
+import logging
+import logging.handlers
+import re
+
+from pathlib import PosixPath, Path
+
+def list_dirs(root, children=[], level=1, depth=2, logger=None):
+    items = root.iterdir()
+    for item in items:
+        if item.is_dir():
+            if logger != None:
+                logger.info(item)
+            if re.search(".git", item.name):
+                children.append(item.parent)
+                return
+            if level < depth:
+                list_dirs(item, children, level + 1, depth, logger)
+
+def create_logger():
+    LOG_FILENAME = Path.joinpath(Path.cwd(), "pyprj.log")
+    logger = logging.getLogger('root')
+    logger.setLevel(logging.INFO)
+    handler = logging.handlers.RotatingFileHandler(
+            LOG_FILENAME,
+            maxBytes = 1024 * 1000,
+            backupCount = 3,
+            )
+    logger.addHandler(handler)
+    return logger
+
+log = create_logger()
+root = PosixPath("~/Projects").expanduser()
+projects = []
+list_dirs(root, projects, depth=4, logger=log)
+
+for p in projects:
+    print(p)
+
+
