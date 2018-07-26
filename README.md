@@ -21,3 +21,6 @@ function _myprojects() {
 }
 compctl -K _myprojects myprojects
 ```
+
+Then in a terminal window type myprojects <TAB>, and you'll get a listing of all your projects that
+have a .git directory.
